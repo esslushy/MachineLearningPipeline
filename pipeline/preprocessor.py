@@ -16,9 +16,8 @@ class Preprocessor():
         if step == 'fillnan':
             # Replace all NaNs with empty strings
             data = np.nan_to_num(data, nan='')
-            print(data)
         elif step == 'lowercase':
-            pass
+            data = [d.lower() for d in data]
         else:
-            warnings.warn('Unknown step typed recieved. Running no processes.')
+            warnings.warn('Unknown step typed recieved. No preprocessing will be done.')
         return data
