@@ -1,0 +1,10 @@
+{
+    "dataLoader": "WiliLoader",
+    "dataPath": "../dataset",
+    "preprocessing": ["fillnan", "lowercase"],
+    "features": ["tfidf"],
+    "model": "Naive Bayes",
+    "metrics": ["accuracy"],
+    "outputPath": "../results/",
+    "experimentName": "Wili1.txt"
+}
