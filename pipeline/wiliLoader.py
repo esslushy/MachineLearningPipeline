@@ -1,5 +1,3 @@
-import pandas as pd
-
 class WiliLoader():
     def load(self, data_path):
         """
