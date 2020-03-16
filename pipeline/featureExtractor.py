@@ -26,4 +26,5 @@ class FeatureExtractor():
         """
         # Transform the data
         data = self.vectorizer.transform(data)
-        return data
+        # Densify the array
+        return data.toarray()
