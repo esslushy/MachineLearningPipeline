@@ -2,9 +2,12 @@
     "dataLoader": "WiliLoader",
     "dataPath": "../dataset",
     "preprocessing": ["fillnan", "lowercase"],
+    "preprocessingPath": "preprocessed/",
     "features": ["tfidf"],
+    "featurePath": "features/",
     "model": "Naive Bayes",
+    "modelPath": "models/",
     "metrics": ["accuracy"],
-    "outputPath": "../results/",
-    "experimentName": "Wili1.txt"
+    "metricPath": "metrics/",
+    "experimentName": "Wili1"
 }

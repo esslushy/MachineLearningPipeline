@@ -14,11 +14,20 @@ from featureExtractor import FeatureExtractor
 class Pipeline(object):
 
     def __init__(self, configFile):
-        #Load the specific configuration file
+        # Load the specific configuration file
         self.config = json.load(open(configFile, 'r'))
+        # Build the paths for the pipeline
+        self.experiment_path = os.path.join('../', self.config['experimentName'])
+        self.preprocessing_path = os.path.join(self.experiment_path, self.config['preprocessingPath'])
+        self.feature_path = os.path.join(self.experiment_path, self.config['featurePath'])
+        self.model_path = os.path.join(self.experiment_path, self.config['modelPath'])
+        self.metric_path = os.path.join(self.experiment_path, self.config['metricPath'])
+        # Create the folder for the experiment if it doesn't already exist
+        if not os.path.exists(self.experiment_path):
+            os.mkdir(self.experiment_path)
 
     def execute(self):
-        #Execute the pipeline
+        # Execute the pipeline
         print('Loading Data - ' + self.timestamp())
         train_data, train_labels, test_data, test_labels = self.loadData()
         print('Preprocessing Data - ' + self.timestamp())
@@ -31,16 +40,42 @@ class Pipeline(object):
         self.evaluate(model, test_vectors, test_labels)
 
     def loadData(self):
-        #Load the data as specified by the config file
+        # Load the data as specified by the config file
         dataLoader = self.resolve('dataLoader', self.config['dataLoader'])()
         return dataLoader.load(self.config['dataPath'])
 
     def preprocessData(self, train_data, test_data):
-        #Preprocess the data as specified in the config file
+        # Preprocessor
         preprocessor = Preprocessor()
-        for step in self.config['preprocessing']:
-            train_data = preprocessor.process(step, train_data)
-            test_data = preprocessor.process(step, test_data)
+        # Make preprocessing path if it doesnt exist
+        if not os.path.exists(self.preprocessing_path):
+            os.mkdir(self.preprocessing_path)
+        # Check if preprocessing training artifact exists
+        if os.path.exists(os.path.join(self.preprocessing_path, 'train_data.txt')):
+            # Load train data if it does
+            train_data = open(os.path.join(self.preprocessing_path, 'train_data.txt')).read().splitlines()
+        else:
+            # Preprocess the data as specified in the config file
+            for step in self.config['preprocessing']:
+                train_data = preprocessor.process(step, train_data)
+            # Save the training data artifact
+            with open(os.path.join(self.preprocessing_path, 'train_data.txt'), 'w+') as f:
+                # Write the array with each datapoint on a new line
+                f.write('\n'.join(train_data))
+                f.close()
+        # Check if preprocessing testing artifact exists
+        if os.path.exists(os.path.join(self.preprocessing_path, 'test_data.txt')):
+            # Load test data if it does
+            test_data = open(os.path.join(self.preprocessing_path, 'test_data.txt')).read().splitlines()
+        else:
+            # Preprocess the data as specified in the config file
+            for step in self.config['preprocessing']:
+                test_data = preprocessor.process(step, test_data)
+            # Save the testing data artifact
+            with open(os.path.join(self.preprocessing_path, 'test_data.txt'), 'w+') as f:
+                # Write the array with each datapoint on a new line
+                f.write('\n'.join(test_data))
+                f.close()
         return train_data, test_data
 
     def extractFeatures(self, train_data, test_data):
