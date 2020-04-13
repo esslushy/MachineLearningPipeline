@@ -1,6 +1,7 @@
 import os
 import json
 import datetime
+import pickle
 
 import numpy
 from sklearn.naive_bayes import GaussianNB
@@ -114,9 +115,20 @@ class Pipeline(object):
         return train_vectors, test_vectors
 
     def fitModel(self, train_vectors, train_labels):
-        #Fit the model specified in the config file (with specified args)
-        model = self.resolve('model', self.config['model'])
-        return model().fit(train_vectors, train_labels)
+        # Make model path if it doesnt exist
+        if not os.path.exists(self.model_path):
+            os.mkdir(self.model_path)
+        # Check if model exists
+        if os.path.exists(os.path.join(self.model_path, self.config['model'].replace(' ', '_') + '.pickle')):
+            # If it does, load it
+            model = pickle.load(open(os.path.join(self.model_path, self.config['model'].replace(' ', '_') + '.pickle'), 'rb'))
+        else:
+            # Fit the model specified in the config file (with specified args)
+            model = self.resolve('model', self.config['model'])
+            model = model().fit(train_vectors, train_labels)
+            # Save the model
+            pickle.dump(model, open(os.path.join(self.model_path, self.config['model'].replace(' ', '_') + '.pickle'), 'wb'))
+        return model
 
     def evaluate(self, model, test_data, test_labels):
         #Evaluate using the metrics specified in the config file
