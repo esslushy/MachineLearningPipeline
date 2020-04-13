@@ -79,18 +79,38 @@ class Pipeline(object):
         return train_data, test_data
 
     def extractFeatures(self, train_data, test_data):
+        # Construct Feature Extractor
         fe = FeatureExtractor()
         fe.buildVectorizer(train_data)
-        train_vectors = [fe.process(feature, train_data) for feature in self.config['features']]
-        if len(train_vectors) > 1:
-            train_vectors = numpy.concatenate(train_vectors, axis=1)
+        # Make feature path if it doesnt exist
+        if not os.path.exists(self.feature_path):
+            os.mkdir(self.feature_path)
+        # Check if train vectors already exist
+        if os.path.exists(os.path.join(self.feature_path, 'train_vectors.npy')):
+            # If it does, load them
+            train_vectors = numpy.load(os.path.join(self.feature_path, 'train_vectors.npy'))
         else:
-            train_vectors = train_vectors[0]
-        test_vectors = [fe.process(feature, test_data) for feature in self.config['features']]
-        if len(test_vectors) > 1:
-            test_vectors = numpy.concatenate(test_vectors, axis=1)
+            # Make the train vectors
+            train_vectors = [fe.process(feature, train_data) for feature in self.config['features']]
+            if len(train_vectors) > 1:
+                train_vectors = numpy.concatenate(train_vectors, axis=1)
+            else:
+                train_vectors = train_vectors[0]
+            # Save the train vectors
+            numpy.save(os.path.join(self.feature_path, 'train_vectors.npy'), train_vectors)
+        # Check if test vectors already exist
+        if os.path.exists(os.path.join(self.feature_path, 'test_vectors.npy')):
+            # If it does, load them
+            test_vectors = numpy.load(os.path.join(self.feature_path, 'test_vectors.npy'))
         else:
-            test_vectors = test_vectors[0]
+            # Make the test vectors
+            test_vectors = [fe.process(feature, test_data) for feature in self.config['features']]
+            if len(test_vectors) > 1:
+                test_vectors = numpy.concatenate(test_vectors, axis=1)
+            else:
+                test_vectors = test_vectors[0]
+            # Save the test vectors
+            numpy.save(os.path.join(self.feature_path, 'test_vectors.npy'), test_vectors)
         return train_vectors, test_vectors
 
     def fitModel(self, train_vectors, train_labels):
