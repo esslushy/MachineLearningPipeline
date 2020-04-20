@@ -114,7 +114,7 @@ class Pipeline(object):
             numpy.save(os.path.join(self.feature_path, 'test_vectors.npy'), test_vectors)
         return train_vectors, test_vectors
 
-    def fitModel(self, train_vectors, train_labels, kwargs):
+    def fitModel(self, train_vectors, train_labels):
         # Make model path if it doesnt exist
         if not os.path.exists(self.model_path):
             os.mkdir(self.model_path)
@@ -125,7 +125,7 @@ class Pipeline(object):
         else:
             # Fit the model specified in the config file (with specified args)
             model = self.resolve('model', self.config['model'])
-            model = model(**kwargs).fit(train_vectors, train_labels)
+            model = model(**self.config['modelKwargs']).fit(train_vectors, train_labels)
             # Save the model
             pickle.dump(model, open(os.path.join(self.model_path, self.config['model'].replace(' ', '_') + '.pickle'), 'wb'))
         return model
