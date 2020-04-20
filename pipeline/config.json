@@ -4,8 +4,15 @@
     "preprocessing": ["fillnan", "lowercase"],
     "preprocessingPath": "preprocessed/",
     "features": ["tfidf"],
+    "featureKwargs": {
+        "ngram_range": [1, 3], 
+        "analyzer": "char_wb"
+    },
     "featurePath": "features/",
-    "model": "Naive Bayes",
+    "model": "SVM",
+    "modelKwargs": {
+        "kernel": "linear"
+    },
     "modelPath": "models/",
     "metrics": ["accuracy"],
     "metricPath": "metrics/",

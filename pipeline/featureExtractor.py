@@ -1,7 +1,7 @@
 from sklearn.feature_extraction.text import CountVectorizer
 
 class FeatureExtractor():
-    def buildVectorizer(self, data):
+    def buildVectorizer(self, data, kwargs):
         """
           Constructs a CountVectorizer based on the given data.
 
@@ -9,7 +9,7 @@ class FeatureExtractor():
             data: Data to train the CountVectorizer
         """
         # Instantiate CountVectorizer
-        self.vectorizer = CountVectorizer(analyzer='char_wb')
+        self.vectorizer = CountVectorizer(**kwargs)
         # Train CountVectorizer
         self.vectorizer.fit(data)
 
