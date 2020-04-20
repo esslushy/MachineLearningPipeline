@@ -140,7 +140,7 @@ class Pipeline(object):
         print(results)
 
     def output(self, results):
-        output_file = os.path.join(self.config['outputPath'], self.config['experimentName'])
+        output_file = os.path.join(self.experiment_path, 'metrics.json')
         F = open(output_file, 'w')
         F.write(json.dumps(self.config) + '\n')
         for metric in results:
