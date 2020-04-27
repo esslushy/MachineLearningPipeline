@@ -9,7 +9,7 @@ class FeatureExtractor():
             data: Data to train the CountVectorizer
         """
         # Instantiate CountVectorizer
-        self.vectorizer = CountVectorizer(**kwargs)
+        self.vectorizer = CountVectorizer(**kwargs)#TODO Solve Error related to new arguments causing an array too big to fit normally in memory
         # Train CountVectorizer
         self.vectorizer.fit(data)
 
@@ -26,5 +26,4 @@ class FeatureExtractor():
         """
         # Transform the data
         data = self.vectorizer.transform(data)
-        # Densify the array
-        return data.toarray()
+        return data

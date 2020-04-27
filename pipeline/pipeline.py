@@ -5,7 +5,9 @@ import pickle
 
 import numpy
 from sklearn.naive_bayes import GaussianNB
+from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
+from scipy.sparse import save_npz, load_npz
 
 from dataLoader import DataLoader
 from wiliLoader import WiliLoader
@@ -87,9 +89,9 @@ class Pipeline(object):
         if not os.path.exists(self.feature_path):
             os.mkdir(self.feature_path)
         # Check if train vectors already exist
-        if os.path.exists(os.path.join(self.feature_path, 'train_vectors.npy')):
+        if os.path.exists(os.path.join(self.feature_path, 'train_vectors.npz')):
             # If it does, load them
-            train_vectors = numpy.load(os.path.join(self.feature_path, 'train_vectors.npy'))
+            train_vectors = load_npz(os.path.join(self.feature_path, 'train_vectors.npz'))
         else:
             # Make the train vectors
             train_vectors = [fe.process(feature, train_data) for feature in self.config['features']]
@@ -98,11 +100,11 @@ class Pipeline(object):
             else:
                 train_vectors = train_vectors[0]
             # Save the train vectors
-            numpy.save(os.path.join(self.feature_path, 'train_vectors.npy'), train_vectors)
+            save_npz(os.path.join(self.feature_path, 'train_vectors.npz'), train_vectors)
         # Check if test vectors already exist
-        if os.path.exists(os.path.join(self.feature_path, 'test_vectors.npy')):
+        if os.path.exists(os.path.join(self.feature_path, 'test_vectors.npz')):
             # If it does, load them
-            test_vectors = numpy.load(os.path.join(self.feature_path, 'test_vectors.npy'))
+            test_vectors = load_npz(os.path.join(self.feature_path, 'test_vectors.npz'))
         else:
             # Make the test vectors
             test_vectors = [fe.process(feature, test_data) for feature in self.config['features']]
@@ -111,7 +113,7 @@ class Pipeline(object):
             else:
                 test_vectors = test_vectors[0]
             # Save the test vectors
-            numpy.save(os.path.join(self.feature_path, 'test_vectors.npy'), test_vectors)
+            save_npz(os.path.join(self.feature_path, 'test_vectors.npz'), test_vectors)
         return train_vectors, test_vectors
 
     def fitModel(self, train_vectors, train_labels):
@@ -151,7 +153,8 @@ class Pipeline(object):
         #Resolve a specific config string to function pointers or list thereof
         configurations = {'dataLoader': {'baseLoader': DataLoader,
                                          'WiliLoader': WiliLoader},
-                          'model': {'Naive Bayes': GaussianNB},
+                          'model': {'Naive Bayes': GaussianNB,
+                                    'SVM': SVC},
                           'metrics': {'accuracy': accuracy_score}
                          }
         #These asserts will raise an error if the config string is not found
