@@ -1,0 +1,9 @@
+1. Which of the three built-in options for the 'analyzer' parameter of the CountVectorizer works best for a linear kernel SVM aware of unigram+bigram+trigrams? Why do you think that is?
+
+char_wb = 0.9519
+char =
+word = 
+
+2. Keeping preprocessing/feature extraction the same (you choose), what works best: A logistic regression with L1 regularization, an rbf-kernel SVM, or a decision tree using entropy as its criteria with a maximum depth of 10?
+
+3. Is lowercasing during preprocessing generally helpful, hurtful, or unimpactful for this problem?

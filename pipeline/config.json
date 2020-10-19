@@ -1,6 +1,8 @@
 {
     "dataLoader": "WiliLoader",
     "dataPath": "../dataset",
+    "quantityTrainData": -1,
+    "quantityTestData": 10000,
     "preprocessing": ["fillnan", "lowercase"],
     "preprocessingPath": "preprocessed/",
     "features": ["tfidf"],
@@ -16,5 +18,5 @@
     "modelPath": "models/",
     "metrics": ["accuracy"],
     "metricPath": "metrics/",
-    "experimentName": "Wili1"
+    "experimentName": "Wili-analyzer=char_wb"
 }

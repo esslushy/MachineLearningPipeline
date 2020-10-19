@@ -38,14 +38,14 @@ class Pipeline(object):
         print('Extracting Features - ' + self.timestamp())
         train_vectors, test_vectors = self.extractFeatures(clean_train, clean_test)
         print('Training Model - ' + self.timestamp())
-        model = self.fitModel(train_vectors, train_labels)
+        self.model = self.fitModel(train_vectors, train_labels)
         print('Evaluating Model - ' + self.timestamp())
-        self.evaluate(model, test_vectors, test_labels)
+        self.evaluate(test_vectors, test_labels)
 
     def loadData(self):
         # Load the data as specified by the config file
         dataLoader = self.resolve('dataLoader', self.config['dataLoader'])()
-        return dataLoader.load(self.config['dataPath'])
+        return dataLoader.load(self.config['dataPath'], self.config['quantityTrainData'], self.config['quantityTestData'])
 
     def preprocessData(self, train_data, test_data):
         # Preprocessor
@@ -132,9 +132,9 @@ class Pipeline(object):
             pickle.dump(model, open(os.path.join(self.model_path, self.config['model'].replace(' ', '_') + '.pickle'), 'wb'))
         return model
 
-    def evaluate(self, model, test_data, test_labels):
+    def evaluate(self, test_data, test_labels):
         #Evaluate using the metrics specified in the config file
-        predictions = model.predict(test_data)
+        predictions = self.model.predict(test_data)
         results = {}
         for metric in self.config['metrics']:
             results[metric] = self.resolve('metrics', metric)(predictions, test_labels)
@@ -144,9 +144,7 @@ class Pipeline(object):
     def output(self, results):
         output_file = os.path.join(self.experiment_path, 'metrics.json')
         F = open(output_file, 'w')
-        F.write(json.dumps(self.config) + '\n')
-        for metric in results:
-            F.write(metric + ',%f\n' % results[metric])
+        F.write(json.dumps({'config': self.config, 'results': results}) + '\n')
         F.close()
 
     def resolve(self, category, setting):
